@@ -1,11 +1,15 @@
 import { createContext } from 'react';
-import { io } from 'socket.io-client';
-import { NetworkState, NetworkAction } from './reducer';
+
+export type NetworkState =
+  | 'connecting'
+  | 'connected'
+  | 'disconnecting'
+  | 'disconnected';
 
 type NetworkContext = {
-  socket: ReturnType<typeof io>;
-  state: NetworkState;
-  dispatch: React.Dispatch<NetworkAction>;
+  networkState: NetworkState;
+  connect: () => void;
+  disconnect: () => void;
 };
 
 export default createContext({} as NetworkContext);

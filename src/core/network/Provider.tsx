@@ -1,36 +1,55 @@
-import { FC, useContext, useReducer, useState } from 'react';
-import { io } from 'socket.io-client';
-import Context from './Context';
-import url from '../config/url';
-import reducer from './reducer';
+import { FC, useEffect, useState } from 'react';
+import Context, { NetworkState } from './Context';
+import socket from './socket';
 
 const Provider: FC = ({ children }) => {
-  const socket = io(url);
-  const [state, dispatch] = useReducer(reducer, 'loading');
-  socket.on('connect', () => {
-    // TODO: handle connect
-    console.log('connect');
-  });
+  // initialize state
+  const [networkState, setNetworkState] = useState<NetworkState>('disconnected');
 
-  socket.on('disconnect', (ev) => {
-    // TODO: handle disconnect
-    console.log('disconnect', ev);
-  });
-  socket.on('connect_error', (ev) => {
-    // TODO: handle connect_error
-    console.log('connect_error', ev);
-  });
-  socket.on('reconnect', (ev) => {
-    // TODO: handle reconnect
-    console.log('reconnect', ev);
-  });
+  useEffect(() => {
+    switch (networkState) {
+      case 'connecting':
+        socket.connect();
+        break;
+      case 'disconnecting':
+        socket.disconnect();
+        break;
+    }
+  }, [networkState]);
+
+  useEffect(() => {
+    // socket connections
+    socket.on('connect', () => {
+      setNetworkState('connected');
+    });
+    socket.on('disconnect', () => {
+      setNetworkState('disconnected');
+    });
+    socket.on('reconnect', () => {
+      setNetworkState('connected');
+    });
+    socket.on('connect_error', (ev) => {
+      // TODO: handle connect_error
+    });
+    socket.on('order_event', (data) => {
+      // TODO: handle order_event
+    });
+  }, []);
+
+  // public methods
+  const connect = () => {
+    setNetworkState('connecting');
+  };
+  const disconnect = () => {
+    setNetworkState('disconnecting');
+  };
 
   return (
     <Context.Provider
       value={{
-        socket,
-        state,
-        dispatch
+        networkState,
+        connect,
+        disconnect
       }}
     >
       {children}
