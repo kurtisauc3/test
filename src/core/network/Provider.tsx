@@ -1,33 +1,15 @@
 import { FC, useEffect, useState } from 'react';
-import Context, { NetworkState } from './Context';
+import Context, { NetworkState, OrderEvent } from './Context';
 import socket from './socket';
 
 const Provider: FC = ({ children }) => {
   // initialize state
   const [networkState, setNetworkState] = useState<NetworkState>('disconnected');
   const [networkError, setNetworkError] = useState<string>();
+  const [orderEvent, setOrderEvent] = useState<OrderEvent>();
 
+  // socket connections
   useEffect(() => {
-    switch (networkState) {
-      case 'connecting':
-        setNetworkError(undefined);
-        socket.connect();
-        break;
-      case 'error':
-      case 'disconnecting':
-        socket.disconnect();
-        break;
-    }
-  }, [networkState]);
-
-  useEffect(() => {
-    if (networkError) {
-      setNetworkState('error');
-    }
-  }, [networkError]);
-
-  useEffect(() => {
-    // socket connections
     socket.on('connect', () => {
       setNetworkState('connected');
     });
@@ -41,9 +23,30 @@ const Provider: FC = ({ children }) => {
       setNetworkError(err.message);
     });
     socket.on('order_event', (data) => {
-      // TODO: handle order_event
+      setOrderEvent(data);
     });
   }, []);
+
+  // connection effects
+  useEffect(() => {
+    switch (networkState) {
+      case 'connecting':
+        setNetworkError(undefined);
+        socket.connect();
+        break;
+      case 'error':
+      case 'disconnecting':
+        socket.disconnect();
+        break;
+    }
+  }, [networkState]);
+
+  // error effects
+  useEffect(() => {
+    if (networkError) {
+      setNetworkState('error');
+    }
+  }, [networkError]);
 
   // public methods
   const connect = () => {
@@ -59,7 +62,8 @@ const Provider: FC = ({ children }) => {
         networkState,
         networkError,
         connect,
-        disconnect
+        disconnect,
+        orderEvent
       }}
     >
       {children}
