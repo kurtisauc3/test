@@ -4,6 +4,7 @@ import Connecting from './components/Connecting';
 import Connected from './components/Connected';
 import Disconnecting from './components/Disconnecting';
 import Disconnected from './components/Disconnected';
+import Error from './components/Error';
 
 const Component: FC = () => {
   const { networkState } = useContext(Context);
@@ -16,6 +17,8 @@ const Component: FC = () => {
       return <Disconnecting />;
     case 'disconnected':
       return <Disconnected />;
+    case 'error':
+      return <Error />;
   }
 };
 
