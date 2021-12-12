@@ -5,12 +5,11 @@ import { OrderEvent } from './types';
 
 const Component: FC = () => {
   const [orderMap, setOrderMap] = useState<TableData<OrderEvent>>({});
+
+  // order effect
   useEffect(() => {
     const callback = (data: OrderEvent[]) => {
-      const updatedOrderMap = data.reduce((acc, order) => {
-        const { id, ...rest } = order;
-        return { ...acc, [id]: rest };
-      }, {});
+      const updatedOrderMap = data.reduce((acc, order) => ({ ...acc, [order.id]: order }), {});
       setOrderMap((_orderMap) => ({ ..._orderMap, ...updatedOrderMap }));
     };
     socket.on('order_event', callback);

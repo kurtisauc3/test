@@ -1,9 +1,7 @@
 import { FC, useCallback, useContext, useMemo, useState } from 'react';
 import Context from '../../core/network/Context';
 
-export type TableData<T> = {
-  [key: string]: T;
-};
+export type TableData<T> = { [key: string]: T };
 
 export type TableSearchOperands = 'contains' | 'exact';
 export type TableSearchValue = { operand: TableSearchOperands; value: string };
@@ -18,6 +16,8 @@ const Component = <T, SeachField extends keyof T>(props: TableProps<T, SeachFiel
   const { data, columns, defaultSearch } = props;
   const [search, setSearch] = useState<TableSearch<T, SeachField>>(defaultSearch);
   const operands: TableSearchOperands[] = ['contains', 'exact'];
+
+  // data filtered by search
   const tableData = useMemo(
     () =>
       Object.values(data).filter((row) => {
@@ -36,6 +36,8 @@ const Component = <T, SeachField extends keyof T>(props: TableProps<T, SeachFiel
       }),
     [data, search]
   );
+
+  // renders an optional search box for each column
   const renderSearch = useCallback(
     (key: SeachField): React.ReactNode => {
       if (key in search) {
@@ -78,6 +80,7 @@ const Component = <T, SeachField extends keyof T>(props: TableProps<T, SeachFiel
     },
     [search]
   );
+
   return (
     <table>
       <thead>
