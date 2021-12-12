@@ -1,13 +1,12 @@
 import { FC, useEffect, useState } from 'react';
 import Context from './Context';
-import { NetworkState, OrderEvent, OrderMap } from './types';
+import { NetworkState } from './types';
 import socket from './socket';
 
 const Provider: FC = ({ children }) => {
   // initialize state
   const [networkState, setNetworkState] = useState<NetworkState>('disconnected');
   const [networkError, setNetworkError] = useState<string>();
-  const [orderMap, setOrderMap] = useState<OrderMap>({});
 
   // socket connections
   useEffect(() => {
@@ -22,13 +21,6 @@ const Provider: FC = ({ children }) => {
     });
     socket.on('connect_error', (err) => {
       setNetworkError(err.message);
-    });
-    socket.on('order_event', (data: OrderEvent[]) => {
-      const updatedOrderMap = data.reduce((acc, order) => {
-        const { id, ...rest } = order;
-        return { ...acc, [id]: rest };
-      }, {});
-      setOrderMap((_orderMap) => ({ ..._orderMap, ...updatedOrderMap }));
     });
   }, []);
 
@@ -67,8 +59,7 @@ const Provider: FC = ({ children }) => {
         networkState,
         networkError,
         connect,
-        disconnect,
-        orderMap
+        disconnect
       }}
     >
       {children}

@@ -1,6 +1,5 @@
 import { FC, useContext } from 'react';
-import Context from '../core/network/Context';
-import OrderTable from './OrderTable';
+import Context from '../network/Context';
 
 const Component: FC = () => {
   const { disconnect } = useContext(Context);
@@ -9,7 +8,6 @@ const Component: FC = () => {
     <>
       Connected
       <button onClick={disconnect}>disconnect</button>
-      <OrderTable />
     </>
   );
 };

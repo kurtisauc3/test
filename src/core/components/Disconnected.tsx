@@ -1,5 +1,5 @@
 import { FC, useContext } from 'react';
-import Context from '../core/network/Context';
+import Context from '../network/Context';
 
 const Component: FC = () => {
   const { connect } = useContext(Context);
