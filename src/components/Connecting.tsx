@@ -1,7 +1,7 @@
 import { FC } from 'react';
 
 const Component: FC = () => {
-  // TODO: handle connecting
+  // TODO: style
   return <>Connecting</>;
 };
 

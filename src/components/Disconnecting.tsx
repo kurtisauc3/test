@@ -1,7 +1,7 @@
 import React, { FC } from 'react';
 
 const Component: FC = () => {
-  // TODO: handle disconnecting
+  // TODO: style
   return <>Disconnecting</>;
 };
 
