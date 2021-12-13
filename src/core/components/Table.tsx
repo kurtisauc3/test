@@ -1,5 +1,4 @@
-import { FC, useCallback, useContext, useMemo, useState } from 'react';
-import Context from '../../core/network/Context';
+import { useCallback, useMemo, useState } from 'react';
 
 export type TableData<T> = { [key: string]: T };
 
@@ -11,11 +10,11 @@ export type TableProps<T, SeachField extends keyof T> = {
   columns: Array<keyof T>;
   defaultSearch: TableSearch<T, SeachField>;
 };
+const operands: TableSearchOperands[] = ['contains', 'exact'];
 
 const Component = <T, SeachField extends keyof T>(props: TableProps<T, SeachField>) => {
   const { data, columns, defaultSearch } = props;
   const [search, setSearch] = useState<TableSearch<T, SeachField>>(defaultSearch);
-  const operands: TableSearchOperands[] = ['contains', 'exact'];
 
   // data filtered by search
   const tableData = useMemo(

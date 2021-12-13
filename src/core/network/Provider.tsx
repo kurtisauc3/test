@@ -2,6 +2,7 @@ import { FC, useEffect, useState } from 'react';
 import Context from './Context';
 import { NetworkState } from './types';
 import socket from './socket';
+import ANIMATION_DELAY from '../config/delay';
 
 const Provider: FC = ({ children }) => {
   // initialize state
@@ -29,11 +30,11 @@ const Provider: FC = ({ children }) => {
     switch (networkState) {
       case 'connecting':
         setNetworkError(undefined);
-        socket.connect();
+        setTimeout(() => socket.connect(), ANIMATION_DELAY);
         break;
       case 'error':
       case 'disconnecting':
-        socket.disconnect();
+        setTimeout(() => socket.disconnect(), ANIMATION_DELAY);
         break;
     }
   }, [networkState]);

@@ -1,7 +1,20 @@
 import { FC, useEffect, useState } from 'react';
 import Table, { TableData, TableProps } from '../core/components/Table';
 import socket from '../core/network/socket';
-import { OrderEvent } from './types';
+
+export type EventName = 'CREATED' | 'CANCELLED' | 'COOKED' | 'DRIVER_RECEIVED' | 'DELIVERED';
+
+export type OrderEvent = {
+  customer: string;
+  destination: string;
+  event_name: EventName;
+  id: string;
+  item: string;
+  price: number;
+  sent_at_second: number;
+};
+
+export type OrderEventCallback = (order: OrderEvent) => void;
 
 const Component: FC = () => {
   const [orderMap, setOrderMap] = useState<TableData<OrderEvent>>({});
