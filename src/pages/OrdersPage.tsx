@@ -1,5 +1,6 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useContext, useEffect, useState } from 'react';
 import Table, { TableData, TableProps } from '../core/components/Table';
+import Context from '../core/network/Context';
 import socket from '../core/network/socket';
 
 export type EventName = 'CREATED' | 'CANCELLED' | 'COOKED' | 'DRIVER_RECEIVED' | 'DELIVERED';
@@ -17,6 +18,7 @@ export type OrderEvent = {
 export type OrderEventCallback = (order: OrderEvent) => void;
 
 const Component: FC = () => {
+  const { disconnect } = useContext(Context);
   const [orderMap, setOrderMap] = useState<TableData<OrderEvent>>({});
 
   // order effect
@@ -42,7 +44,12 @@ const Component: FC = () => {
     }
   };
 
-  return <Table {...props} />;
+  return (
+    <>
+      <button onClick={disconnect}>disconnect</button>
+      <Table {...props} />;
+    </>
+  );
 };
 
 export default Component;
