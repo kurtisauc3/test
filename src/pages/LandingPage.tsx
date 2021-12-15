@@ -1,19 +1,19 @@
 import { FC, useContext } from 'react';
 import Context from '../core/network/Context';
-import { WhiteContainer, TextContainer, BlackColor, WhiteColor, OrangeContaner } from './styles';
+import CenterContainer from '../core/components/CenterContainer';
+import Button from '../core/components/Button';
+import Heading from '../core/components/Heading';
 
 const Component: FC = () => {
   const { connect } = useContext(Context);
 
   return (
-    <WhiteContainer>
-      <TextContainer>
-        <BlackColor>Front-end Engineering Challenge</BlackColor>
-        <OrangeContaner onClick={connect}>
-          <WhiteColor>CONNECT</WhiteColor>
-        </OrangeContaner>
-      </TextContainer>
-    </WhiteContainer>
+    <CenterContainer>
+      <Heading>Front-end Engineering Challenge</Heading>
+      <Button theme="orange" onClick={connect}>
+        CONNECT
+      </Button>
+    </CenterContainer>
   );
 };
 

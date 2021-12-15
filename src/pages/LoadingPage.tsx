@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styled from 'styled-components';
-import { WhiteContainer } from './styles';
 
 const GradientAnimation = styled.div`
   @keyframes shimmer {
@@ -24,11 +23,7 @@ const GradientAnimation = styled.div`
 `;
 
 const Component: FC = () => {
-  return (
-    <WhiteContainer>
-      <GradientAnimation />
-    </WhiteContainer>
-  );
+  return <GradientAnimation />;
 };
 
 export default Component;

@@ -1,7 +1,9 @@
 import { FC, useContext } from 'react';
 import Context from '../core/network/Context';
 import { NetworkError } from '../core/network/types';
-import { WhiteContainer, TextContainer, BlackColor, WhiteColor, OrangeContaner } from './styles';
+import CenterContainer from '../core/components/CenterContainer';
+import Button from '../core/components/Button';
+import Heading from '../core/components/Heading';
 
 type ErrorMap = {
   [Key in NetworkError]: string;
@@ -19,14 +21,12 @@ const Component: FC = () => {
   const { connect, networkError } = useContext(Context);
   const error = networkError ? Errors[networkError] : 'A network error has occured.';
   return (
-    <WhiteContainer>
-      <TextContainer>
-        <BlackColor>{error}</BlackColor>
-        <OrangeContaner onClick={connect}>
-          <WhiteColor>RECONNECT</WhiteColor>
-        </OrangeContaner>
-      </TextContainer>
-    </WhiteContainer>
+    <CenterContainer>
+      <Heading>{error}</Heading>
+      <Button theme="orange" onClick={connect}>
+        RECONNECT
+      </Button>
+    </CenterContainer>
   );
 };
 
