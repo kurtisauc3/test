@@ -1,5 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import styled from 'styled-components';
+import { GREY, OFF_WHITE, ORANGE, WHITE } from './styles';
+import Select from './Select';
+import Input from './Input';
+import SearchIcon from '../../assets/icons/search.png';
 
 export type TableData<T> = { [key: string]: T };
 
@@ -20,9 +24,47 @@ export type TableProps<T> = {
 const operands: TableSearchOperands[] = ['contains', 'exact'];
 
 const TableContainer = styled.table`
-  th {
-    text-transform: uppercase;
-    font-weight: 500;
+  border-collapse: collapse;
+  border-spacing: 0;
+  color: ${GREY};
+  thead {
+    font-size: 18px;
+    box-shadow: 0px 4px 1px ${GREY}33;
+  }
+  tbody {
+  }
+  tr {
+    border: 2px solid ${GREY}33;
+  }
+  tr:nth-child(even) td {
+    background-color: ${ORANGE}33;
+  }
+  tr:nth-child(odd) td {
+    background-color: none;
+  }
+  td {
+    padding: 12px;
+  }
+`;
+
+const SearchContainer = styled.div`
+  position: relative;
+`;
+
+const SearchInput = styled(Input)`
+  color: ${GREY};
+  padding-left: 32px;
+`;
+
+const IconContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  img {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
   }
 `;
 
@@ -57,9 +99,9 @@ const Component = <T,>(props: TableProps<T>) => {
 
   // renders an optional search box for each column
   const renderSearch = useCallback(
-    (key: keyof T): React.ReactNode => (
-      <>
-        <select
+    (key: keyof T, allowSearch: boolean = false): React.ReactNode => (
+      <div style={{ visibility: allowSearch ? 'visible' : 'hidden' }}>
+        <Select
           value={search[key].operand}
           onChange={({ target: { value } }) =>
             setSearch({
@@ -76,20 +118,25 @@ const Component = <T,>(props: TableProps<T>) => {
               {operand}
             </option>
           ))}
-        </select>
-        <input
-          value={search[key].value}
-          onChange={({ target: { value } }) =>
-            setSearch({
-              ...search,
-              [key]: {
-                ...search[key],
-                value
-              }
-            })
-          }
-        />
-      </>
+        </Select>
+        <SearchContainer>
+          <IconContainer>
+            <img src={SearchIcon} />
+          </IconContainer>
+          <SearchInput
+            value={search[key].value}
+            onChange={({ target: { value } }) =>
+              setSearch({
+                ...search,
+                [key]: {
+                  ...search[key],
+                  value
+                }
+              })
+            }
+          />
+        </SearchContainer>
+      </div>
     ),
     [search]
   );
@@ -98,15 +145,11 @@ const Component = <T,>(props: TableProps<T>) => {
     <TableContainer>
       <thead>
         <tr>
-          {columns.map(({ key, display, props }) => (
-            <th {...props} key={String(key)}>
-              {display}
-            </th>
-          ))}
-        </tr>
-        <tr>
-          {columns.map(({ key, allowSearch }) => (
-            <td key={`search.${String(key)}`}>{allowSearch && renderSearch(key)}</td>
+          {columns.map(({ key, display, allowSearch, props }) => (
+            <td {...props} key={String(key)}>
+              <b>{display}</b>
+              {renderSearch(key, allowSearch)}
+            </td>
           ))}
         </tr>
       </thead>
@@ -119,6 +162,7 @@ const Component = <T,>(props: TableProps<T>) => {
           </tr>
         ))}
       </tbody>
+      <tfoot></tfoot>
     </TableContainer>
   );
 };

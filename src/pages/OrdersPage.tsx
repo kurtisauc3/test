@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import Table, { TableData, TableProps } from '../core/components/Table';
 import Context from '../core/network/Context';
 import socket from '../core/network/socket';
-import { ORANGE } from '../core/components/styles';
+import { ORANGE, WHITE } from '../core/components/styles';
 import Button from '../core/components/Button';
 
 export type EventName = 'CREATED' | 'CANCELLED' | 'COOKED' | 'DRIVER_RECEIVED' | 'DELIVERED';
@@ -24,19 +24,25 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
-  width: 100%;
+  max-width: 100%;
   overflow: hidden;
 `;
 const Header = styled.div`
   height: ${HEADER_HEIGHT};
   background-color: ${ORANGE};
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
 `;
 const Content = styled.div`
   height: calc(100% - ${HEADER_HEIGHT});
   overflow: auto;
+`;
+const Title = styled.div`
+  color: ${WHITE};
+  font-size: 20px;
+  margin: 0 20px;
 `;
 const SmallButton = styled(Button)`
   font-size: 12px;
@@ -65,34 +71,28 @@ const Component: FC = () => {
     columns: [
       {
         key: 'customer',
-        display: 'Customer',
-        props: { style: { width: '20%' } }
+        display: 'Customer'
       },
       {
         key: 'destination',
-        display: 'Destination',
-        props: { style: { width: '20%' } }
+        display: 'Destination'
       },
       {
         key: 'event_name',
-        display: 'Status',
-        props: { style: { width: '20%' } }
+        display: 'Status'
       },
       {
         key: 'item',
-        display: 'Item',
-        props: { style: { width: '20%' } }
+        display: 'Item'
       },
       {
         key: 'price',
         display: 'Price',
-        allowSearch: true,
-        props: { style: { width: '10%' } }
+        allowSearch: true
       },
       {
         key: 'sent_at_second',
-        display: 'Time Sent',
-        props: { style: { width: '10%' } }
+        display: 'Time Sent'
       }
     ]
   };
@@ -100,12 +100,13 @@ const Component: FC = () => {
   return (
     <Container>
       <Header>
+        <Title>Orders</Title>
         <SmallButton theme="white" onClick={disconnect}>
           DISCONNECT
         </SmallButton>
       </Header>
       <Content>
-        <Table {...props} />;
+        <Table {...props} />
       </Content>
     </Container>
   );

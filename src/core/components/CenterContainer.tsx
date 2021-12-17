@@ -12,6 +12,7 @@ const CenterContainer = styled.div`
 const ColumnContainer = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
 `;
 
 const Component: FC<React.ButtonHTMLAttributes<HTMLDivElement>> = (props) => {

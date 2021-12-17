@@ -12,7 +12,6 @@ const StyledButton = styled.button`
   border-radius: 50px;
   width: auto;
   font-size: 16px;
-  align-self: flex-end;
   transition: all 0.4s ease;
   color: ${(props: ButtonProps) => {
     switch (props.theme) {
