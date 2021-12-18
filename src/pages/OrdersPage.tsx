@@ -67,7 +67,9 @@ const Component: FC = () => {
   }, []);
 
   const props: TableProps<OrderEvent> = {
+    width: '100%',
     data: orderMap,
+    renderTotal: (total) => <>{total} orders</>,
     columns: [
       {
         key: 'customer',

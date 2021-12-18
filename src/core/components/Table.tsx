@@ -6,7 +6,6 @@ import Input from './Input';
 import SearchIcon from '../../assets/icons/search.png';
 
 export type TableData<T> = { [key: string]: T };
-
 export type TableSearchOperands = 'contains' | 'exact';
 export type TableSearchValue = { operand: TableSearchOperands; value: string };
 export type TableSearch<T> = Record<keyof T, TableSearchValue>;
@@ -17,9 +16,10 @@ export type ColumnProps<T> = {
   allowSearch?: boolean;
   props?: React.ThHTMLAttributes<HTMLTableCellElement>;
 };
-export type TableProps<T> = {
+export type TableProps<T> = Omit<React.TableHTMLAttributes<HTMLTableElement>, 'children'> & {
   data: TableData<T>;
   columns: Array<ColumnProps<T>>;
+  renderTotal?: (total: number) => React.ReactNode;
 };
 const operands: TableSearchOperands[] = ['contains', 'exact'];
 
@@ -27,16 +27,15 @@ const TableContainer = styled.table`
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
-  width: 100%;
   color: ${GREY};
   thead,
   tfoot {
     position: sticky;
-    font-size: 18px;
     background: ${OFF_WHITE};
   }
   thead {
     top: 0;
+    font-size: 18px;
     box-shadow: 0px 4px 4px ${GREY}33;
   }
   tfoot {
@@ -89,8 +88,18 @@ const NoDataContainer = styled.div`
   margin: 0 20px;
 `;
 
+const FooterContainer = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+const PageSizeContainer = styled.div``;
+const PageIndexContainer = styled.div``;
+const PageTotalContainer = styled.div``;
+
 const Component = <T,>(props: TableProps<T>) => {
-  const { data, columns } = props;
+  const { data, columns, renderTotal, ...rest } = props;
+  const [pageIndex, setPageIndex] = useState<number>(0);
+  const [pageSize, setPageSize] = useState<number>(50);
   const [search, setSearch] = useState<TableSearch<T>>(
     columns.reduce(
       (acc, col) => ({ ...acc, [col.key]: { value: '', operand: 'contains' } as TableSearchValue }),
@@ -117,6 +126,8 @@ const Component = <T,>(props: TableProps<T>) => {
       }),
     [data, search]
   );
+
+  const total = useMemo(() => tableData.length, [tableData]);
 
   // renders the table head, column titles and search
   const renderTableHead = (): React.ReactNode => {
@@ -188,16 +199,21 @@ const Component = <T,>(props: TableProps<T>) => {
     );
   };
 
+  // renders the pagination and total
   const renderTableFoot = (): React.ReactNode => {
     return (
       <tr>
-        <td colSpan={columns.length}>Footer</td>
+        <td colSpan={columns.length}>
+          <FooterContainer>
+            <PageTotalContainer>{renderTotal ? renderTotal(total) : total}</PageTotalContainer>
+          </FooterContainer>
+        </td>
       </tr>
     );
   };
 
   return (
-    <TableContainer>
+    <TableContainer {...rest}>
       <thead>{renderTableHead()}</thead>
       <tbody>{renderTableBody()}</tbody>
       <tfoot>{renderTableFoot()}</tfoot>
