@@ -6,6 +6,7 @@ const StyledInput = styled.input`
   border: 2px solid ${GREY}33;
   border-radius: 5px;
   padding: 6px 12px;
+  width: fill-available;
   :focus {
     outline: none !important;
     border-color: ${ORANGE};

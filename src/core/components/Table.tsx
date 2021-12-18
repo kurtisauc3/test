@@ -24,18 +24,24 @@ export type TableProps<T> = {
 const operands: TableSearchOperands[] = ['contains', 'exact'];
 
 const TableContainer = styled.table`
+  table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
   width: 100%;
   color: ${GREY};
-  thead {
-    font-size: 18px;
-    box-shadow: 0px 4px 1px ${GREY}33;
+  thead,
+  tfoot {
     position: sticky;
-    top: 0;
+    font-size: 18px;
     background: ${OFF_WHITE};
   }
-  tbody {
+  thead {
+    top: 0;
+    box-shadow: 0px 4px 4px ${GREY}33;
+  }
+  tfoot {
+    bottom: 0;
+    box-shadow: 0px -4px 4px ${GREY}33;
   }
   tr {
     border: 2px solid ${GREY}33;
@@ -48,6 +54,10 @@ const TableContainer = styled.table`
   }
   td {
     padding: 12px;
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 `;
 
@@ -70,6 +80,13 @@ const IconContainer = styled.div`
     height: 16px;
     opacity: 0.5;
   }
+`;
+
+const NoDataContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 20px;
 `;
 
 const Component = <T,>(props: TableProps<T>) => {
@@ -102,7 +119,7 @@ const Component = <T,>(props: TableProps<T>) => {
   );
 
   // renders the table head, column titles and search
-  const renderTableHead = () => {
+  const renderTableHead = (): React.ReactNode => {
     return (
       <tr>
         {columns.map(({ key, display, allowSearch, props }) => (
@@ -152,7 +169,7 @@ const Component = <T,>(props: TableProps<T>) => {
   };
 
   // renders either no data text or the table data
-  const renderTableBody = () => {
+  const renderTableBody = (): React.ReactNode => {
     if (tableData.length) {
       return tableData.map((order, index) => (
         <tr key={index}>
@@ -162,14 +179,28 @@ const Component = <T,>(props: TableProps<T>) => {
         </tr>
       ));
     }
-    return 'no data';
+    return (
+      <tr>
+        <td colSpan={columns.length}>
+          <NoDataContainer>No data</NoDataContainer>
+        </td>
+      </tr>
+    );
+  };
+
+  const renderTableFoot = (): React.ReactNode => {
+    return (
+      <tr>
+        <td colSpan={columns.length}>Footer</td>
+      </tr>
+    );
   };
 
   return (
     <TableContainer>
       <thead>{renderTableHead()}</thead>
       <tbody>{renderTableBody()}</tbody>
-      <tfoot></tfoot>
+      <tfoot>{renderTableFoot()}</tfoot>
     </TableContainer>
   );
 };
