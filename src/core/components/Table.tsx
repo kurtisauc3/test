@@ -26,10 +26,14 @@ const operands: TableSearchOperands[] = ['contains', 'exact'];
 const TableContainer = styled.table`
   border-collapse: collapse;
   border-spacing: 0;
+  width: 100%;
   color: ${GREY};
   thead {
     font-size: 18px;
     box-shadow: 0px 4px 1px ${GREY}33;
+    position: sticky;
+    top: 0;
+    background: ${OFF_WHITE};
   }
   tbody {
   }
@@ -97,71 +101,74 @@ const Component = <T,>(props: TableProps<T>) => {
     [data, search]
   );
 
-  // renders an optional search box for each column
-  const renderSearch = useCallback(
-    (key: keyof T, allowSearch: boolean = false): React.ReactNode => (
-      <div style={{ visibility: allowSearch ? 'visible' : 'hidden' }}>
-        <Select
-          value={search[key].operand}
-          onChange={({ target: { value } }) =>
-            setSearch({
-              ...search,
-              [key]: {
-                ...search[key],
-                operand: value as TableSearchOperands
-              }
-            })
-          }
-        >
-          {operands.map((operand) => (
-            <option key={operand} value={operand}>
-              {operand}
-            </option>
-          ))}
-        </Select>
-        <SearchContainer>
-          <IconContainer>
-            <img src={SearchIcon} />
-          </IconContainer>
-          <SearchInput
-            value={search[key].value}
-            onChange={({ target: { value } }) =>
-              setSearch({
-                ...search,
-                [key]: {
-                  ...search[key],
-                  value
+  // renders the table head, column titles and search
+  const renderTableHead = () => {
+    return (
+      <tr>
+        {columns.map(({ key, display, allowSearch, props }) => (
+          <td {...props} key={String(key)}>
+            <b>{display}</b>
+            <div style={{ visibility: allowSearch ? 'visible' : 'hidden' }}>
+              <Select
+                value={search[key].operand}
+                onChange={({ target: { value } }) =>
+                  setSearch({
+                    ...search,
+                    [key]: {
+                      ...search[key],
+                      operand: value as TableSearchOperands
+                    }
+                  })
                 }
-              })
-            }
-          />
-        </SearchContainer>
-      </div>
-    ),
-    [search]
-  );
+              >
+                {operands.map((operand) => (
+                  <option key={operand} value={operand}>
+                    {operand}
+                  </option>
+                ))}
+              </Select>
+              <SearchContainer>
+                <IconContainer>
+                  <img src={SearchIcon} />
+                </IconContainer>
+                <SearchInput
+                  value={search[key].value}
+                  onChange={({ target: { value } }) =>
+                    setSearch({
+                      ...search,
+                      [key]: {
+                        ...search[key],
+                        value
+                      }
+                    })
+                  }
+                />
+              </SearchContainer>
+            </div>
+          </td>
+        ))}
+      </tr>
+    );
+  };
+
+  // renders either no data text or the table data
+  const renderTableBody = () => {
+    if (tableData.length) {
+      return tableData.map((order, index) => (
+        <tr key={index}>
+          {columns.map(({ key, render }) => (
+            <td key={`${index}.${String(key)}`}>{render ? render(order) : order[key]}</td>
+          ))}
+        </tr>
+      ));
+    }
+    return 'no data';
+  };
 
   return (
     <TableContainer>
-      <thead>
-        <tr>
-          {columns.map(({ key, display, allowSearch, props }) => (
-            <td {...props} key={String(key)}>
-              <b>{display}</b>
-              {renderSearch(key, allowSearch)}
-            </td>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {tableData.map((order, index) => (
-          <tr key={index}>
-            {columns.map(({ key, render }) => (
-              <td key={`${index}.${String(key)}`}>{render ? render(order) : order[key]}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
+      <thead>{renderTableHead()}</thead>
+      <tbody>{renderTableBody()}</tbody>
       <tfoot></tfoot>
     </TableContainer>
   );
